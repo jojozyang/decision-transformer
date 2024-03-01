@@ -61,7 +61,7 @@ class CausalSelfAttention(nn.Module):
         super().__init__()
         assert config.n_embd % config.n_head == 0
         # key, query, value projections for all heads
-        self.key = nn.Linear(config.n_embd, config.n_embd)
+        self.key = nn.Linear(config.n_embd, config.n_embd) # dimension of W_K ???
         self.query = nn.Linear(config.n_embd, config.n_embd)
         self.value = nn.Linear(config.n_embd, config.n_embd)
         # regularization
@@ -77,7 +77,8 @@ class CausalSelfAttention(nn.Module):
         self.n_head = config.n_head
 
     def forward(self, x, layer_past=None):
-        B, T, C = x.size()
+        """ Input: output """
+        B, T, C = x.size() # x is normalized embeddings?
 
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
         k = self.key(x).view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
